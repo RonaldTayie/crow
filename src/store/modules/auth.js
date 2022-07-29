@@ -32,9 +32,9 @@ const actions = {
             })
             localStorage.setItem('token',token)
             commit('setToken',token)
-            return true;
-        }).catch(() => {
-            return false;
+            return { status: 'success', };
+        }).catch((e) => {
+            return { status: 'failed',message: e };
         })
         return l
     },

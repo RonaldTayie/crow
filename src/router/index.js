@@ -21,6 +21,18 @@ const routes = [
         router.push(from)
       }
     },
+  },
+  {
+    path:"/report",
+    name:"Report",
+    component: ()=> import('../views/ReportView'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.token != undefined) {
+        next()
+      } else {
+        router.push(from)
+      }
+    },
   }
 ]
 
