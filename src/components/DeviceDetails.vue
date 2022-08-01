@@ -118,9 +118,9 @@ export default {
       this.address = r.address.Match_addr
     },
     getCode(){
-      const token = 'ER6IgXaRcpmqvmGGvtPKMvNdzHEuqQn-UNAcR0HmmAy2rvKH9SoKeqm3AUm5zlX_yJy2rvsuwj3csFkE2mtVCR2moVfiDb4IHtMIpLsqUyAldHLoFaEszzpkIMblma9H8SvToBokaMK2-QBgrYb8Jg..'
+      const token = this.geoCodeToken
       if(this.devices[this.uid].last_location){
-        reverseGeocode({token}).latlng(this.devices[this.uid].last_location).run((e,r)=>this.updateAddress(e,r))
+       reverseGeocode({token}).latlng(this.devices[this.uid].last_location).run((e,r)=>this.updateAddress(e,r))
       }
     }
   },
@@ -134,7 +134,8 @@ export default {
       packages: 'getPackages',
       packageImage: 'getPackageImages',
       api: 'getApi',
-      hazardLevels:'getHazardLevels'
+      hazardLevels:'getHazardLevels',
+      geoCodeToken:'getGeoCodeToken'
     })
   },
   watch: {

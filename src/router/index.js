@@ -23,7 +23,7 @@ const routes = [
     },
   },
   {
-    path:"/report",
+    path:"/report/:uid/:startDate/:endDate",
     name:"Report",
     component: ()=> import('../views/ReportView'),
     beforeEnter: (to, from, next) => {
@@ -33,7 +33,19 @@ const routes = [
         router.push(from)
       }
     },
-  }
+  },
+  {
+    path:"/geofence/:uid",
+    name:"GeoFence",
+    component: ()=> import('../views/GeofenceView'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.token != undefined) {
+        next()
+      } else {
+        router.push(from)
+      }
+    },
+  },
 ]
 
 const router = new VueRouter({

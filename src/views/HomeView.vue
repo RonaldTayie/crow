@@ -82,19 +82,19 @@
           nav
           dense
       >
-        <v-list-item link @click="toggleDeviceMenu(true)">
+        <v-list-item link @click="toggleDeviceMenu">
           <v-list-item-icon>
             <v-icon>mdi-chip</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Devices</v-list-item-title>
         </v-list-item>
-        <v-list-item link @click="toggleReportWindow(true)">
+        <v-list-item link @click="toggleReportWindow">
           <v-list-item-icon>
             <v-icon>mdi-file-document-outline</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Reports</v-list-item-title>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item link @click="toggleOptionsMenu">
           <v-list-item-icon>
             <v-icon>mdi-cog-outline</v-icon>
           </v-list-item-icon>
@@ -144,15 +144,13 @@
         <DeviceReport v-if="isReportOpen" @reportViewError="triggerSnackBar"/>
         <DeviceDetails v-if="focusMarker.is_open" :uid="focusMarker.uid"
                        @closeDeviceDetails="focusMarker.is_open=false"/>
+        <OptionsMenu v-if="isOptionsMenuOpen" />
+        <GeoFenceList v-if="geofenceListViewState" :devices="devices" :fences="loadedFences"/>
         <l-map :zoom="zoom" :center="home" class="map" ref="map" :markerZoomAnimation="true" :zoomAnimation="true">
           <l-tile-layer :url="mapUrl" :attribution="mapAttribution" layer-type="base"></l-tile-layer>
           <l-marker :lat-lng="markers.home"></l-marker>
           <l-marker :lat-lng="v.last_location" v-for="(v,k) in devices" :key="k" @click="showDeviceDetails(k)"></l-marker>
-          <l-circle
-              :lat-lng="markers.home"
-              :radius="geoFences.circles['C1'].radius"
-              :color="geoFences.circles['C1'].color"
-          />
+          <l-polygon v-for="poly in loadedFences" :lat-lngs="poly.geometry.coordinates[0]" :key="poly.properties.uid" color="red" fill-color="white" ></l-polygon>
         </l-map>
       </div>
     </v-main>
@@ -160,11 +158,14 @@
 </template>
 
 <script>
-import {LMap, LTileLayer, LMarker, LCircle} from 'vue2-leaflet';
+import {LMap, LTileLayer, LMarker, LPolygon} from 'vue2-leaflet';
 import {mapActions, mapGetters, mapMutations} from "vuex";
 import DevicesMenu from "@/components/DevicesMenu";
 import DeviceDetails from "@/components/DeviceDetails";
 import DeviceReport from "@/components/DeviceReport";
+import OptionsMenu from "@/components/OptionsMenu";
+import GeoFenceList from "@/components/GeoFenceList";
+
 import {latLng} from "leaflet";
 
 export default {
@@ -175,7 +176,9 @@ export default {
     DevicesMenu,
     DeviceDetails,
     DeviceReport,
-    LCircle,
+    LPolygon,
+    OptionsMenu,
+    GeoFenceList
   },
   data() {
     return {
@@ -213,7 +216,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['connect_User', 'LoadDevices', 'mutateBroadcast', 'loadPackages', 'loadHazards', 'toggleDeviceMenu', 'setFocusDeviceUID', 'toggleReportWindow', 'setSnackbarMessage', 'setSnackbarColor', 'showSnackbar', 'hideSnackbar']),
+    ...mapActions(['connect_User', 'LoadDevices', 'mutateBroadcast', 'loadPackages', 'loadHazards', 'toggleDeviceMenu', 'setFocusDeviceUID', 'toggleReportWindow', 'toggleOptionsMenu', 'setSnackbarMessage', 'setSnackbarColor', 'showSnackbar', 'hideSnackbar','loadGeoFences']),
     ...mapMutations(['updateDeviceLocation',]),
     updateMap() {
       // this.markers.home = latLng(-26.8748, 26.6532)
@@ -236,34 +239,6 @@ export default {
       this.setSnackbarMessage(v.message)
       this.showSnackbar()
     },
-    InitDrawingTools() {
-      this.$nextTick(() => {
-        const map = this.$refs.map.mapObject;
-        let drawnItems = new window.L.FeatureGroup();
-        const drawControl = new window.L.Control.Draw({
-          position: 'topright',
-          draw: {
-            polyline: {
-              allowIntersection: true,
-              showArea: true
-            },
-            polygon: true,
-            rectangle: true,
-            circle: true,
-            edit: true,
-          },
-          edit: {
-            featureGroup: drawnItems,
-          },
-        });
-        map.addControl(drawControl);
-        const editableLayers = new window.L.FeatureGroup().addTo(map);
-        map.on(window.L.Draw.Event.CREATED, (e) => {
-          const layer = e.layer;
-          editableLayers.addLayer(layer);
-        });
-      });
-    }
   },
   computed: {
     ...mapGetters({
@@ -274,10 +249,13 @@ export default {
       broadcast: 'getBroadcast',
       socket: 'getUserConnection',
       devices: 'getDevices',
-      drawingToolsStatus: 'drawingToolsStatus',
       isDeviceMenuOpen: 'getDeviceMenuState',
       isReportOpen: 'getReportWindowState',
-      snackbar: 'getSnackbar'
+      isOptionsMenuOpen: 'getOptionsMenuState',
+      geofenceListViewState: 'getGeoFenceListViewState',
+      loadedFences: 'getGeofence',
+      snackbar: 'getSnackbar',
+      focusGeofenceUID: 'getFocusGeofenceUID'
     })
   },
   created() {
@@ -285,6 +263,8 @@ export default {
     this.LoadDevices()
     this.loadPackages()
     this.loadHazards()
+    this.loadGeoFences()
+
     this.socket.onmessage = (v) => {
       const message = JSON.parse(v.data)
       const key = message['device']
@@ -308,6 +288,19 @@ export default {
   },
   mounted() {
     this.drawingToolsStatus ? this.InitDrawingTools() : null
+  },
+  watch: {
+    focusGeofenceUID: {
+      deep: true,
+      immediate: true,
+      handler(v){
+        if(v){
+          const coords = latLng(this.loadedFences[v].geometry.coordinates[0][0])
+          this.recenter(coords)
+        }
+
+      }
+    }
   }
 }
 </script>

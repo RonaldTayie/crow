@@ -19,10 +19,10 @@ export default new Vuex.Store({
   },
   modules: {
     constants,
+    Report,
     auth,
     config,
     extras,
-    Report,
     track,
     devices,
     packages

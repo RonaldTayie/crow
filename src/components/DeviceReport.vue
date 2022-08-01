@@ -6,7 +6,7 @@
   <v-card-subtitle></v-card-subtitle>
   <v-form lazy-validation @submit.prevent="RenderReport" class="form" >
     <v-card-text>
-      <v-select :items="list" label="Select Device" required v-model="selectedDevice" ></v-select>
+      <v-select :items="list" label="Select Device" required v-model="selectedDevice"></v-select>
       <v-divider class="p-0 my-0" ></v-divider>
       <v-menu
           v-model="menu"
@@ -50,24 +50,24 @@ export default {
   name: "DeviceReport",
   data: ()=>({
     list: [],
+    uids:{},
     selectedDevice: null,
     menu: null,
     date_range: []
   }),
   methods: {
-    ...mapActions(['setData']),
+    ...mapActions(['setData','generateReport']),
     initList(){
       Object.values(Object.values(this.devices)).forEach((e)=>{
         this.list.push(e.code)
+        this.uids[e.code] = e.uid
       })
     },
     RenderReport(){
       if(this.selectedDevice==undefined || this.date_range == []){
         this.$emit('reportViewError',{color:'amber darken-2',message:'Select Device and Set Date Range'})
       }else{
-        const data = {date:this.date_range,device_code:this.selectedDevice}
-        this.setData(data)
-        this.$router.push('/report')
+        this.$router.push(`report/${this.uids[this.selectedDevice]}/${this.date_range[0]}/${this.date_range[1]}`)
       }
     }
   },
