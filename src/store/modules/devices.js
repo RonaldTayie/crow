@@ -26,7 +26,7 @@ const actions = {
             let devices = r.data.results
             let dList = {}
             devices.forEach((r)=>{
-                const loc = latLng([r.last_location.latitude,r.last_location.longitude])
+                const loc = latLng([r.last_location.coordinates[1],r.last_location.coordinates[0]])
                 r.last_location = loc
                 dList[r.uid] = r
             })
@@ -34,9 +34,58 @@ const actions = {
             return r.data
         })
     },
+    async createDevice({commit},data){
+        const config = {
+            url :api.api+'track/device',
+            method: "POST",
+            headers: {
+                "Authorization": `Token ${localStorage.token}`
+            },
+            data:data
+        }
+        commit
+        return await axios(config).then( (r)=>{
+            return r
+        }).catch(()=>{
+            return false
+        })
+    },
+    async updateDevice({commit},data){
+        const config = {
+            url :api.api+`track/device/${data.uid}`,
+            method: "PUT",
+            headers: {
+                "Authorization": `Token ${localStorage.token}`
+            },
+            data:data
+        }
+        commit
+        return await axios(config).then( (r)=>{
+            r
+            return true
+        }).catch(()=>{
+            return false
+        })
+    },
+    async deleteDevice({commit},data){
+        const config = {
+            url :api.api+`track/device/${data}`,
+            method: "DELETE",
+            headers: {
+                "Authorization": `Token ${localStorage.token}`
+            },
+        }
+        commit
+        return await axios(config).then( (r)=>{
+            return r
+        }).catch(()=>{
+            return false
+        })
+    },
     async setFocusDeviceUID({commit},uid){
         commit('updateFocusDeviceUID',uid)
-    }
+    },
+
 }
 const getters = {
     getDevices: (state)=>state.devices,

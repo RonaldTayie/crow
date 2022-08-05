@@ -1,12 +1,12 @@
 <template>
-<v-card width="300" height="500" dense class="optionCard" >
+<v-card width="300" dense class="optionCard" >
   <v-card-title>
     Options
   </v-card-title>
   <v-card-text class="p-0" >
-    <v-list dense >
+    <v-list dense ripple >
       <v-list-item-group>
-        <v-list-item ripple dense>
+        <v-list-item dense>
           <v-list-item-avatar>
             <v-icon>
               mdi-fence
@@ -33,7 +33,7 @@
               </template>
 
               <v-list dense>
-                <v-list-item @click="toggleGeoFenceListView(true)" >
+                <v-list-item @click="hideDeviceDetails" >
                   <v-list-item-title>Show Fences</v-list-item-title>
                 </v-list-item>
                 <v-list-item>
@@ -42,6 +42,30 @@
               </v-list>
             </v-menu>
           </v-list-item-action>
+        </v-list-item>
+        <v-list-item to="fleet" >
+          <v-list-item-avatar>
+            <v-icon>
+              mdi-car-multiple
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>
+              Fleet
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-avatar>
+            <v-icon>
+              mdi-card-account-details-outline
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>
+              Drivers
+            </v-list-item-title>
+          </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
     </v-list>
@@ -56,6 +80,10 @@ export default {
   name: "Options",
   methods: {
     ...mapActions(['toggleGeoFenceListView']),
+    hideDeviceDetails() {
+      this.toggleGeoFenceListView(true)
+      this.$emit('hideDetails')
+    }
   }
 }
 </script>

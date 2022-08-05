@@ -61,6 +61,32 @@ const actions = {
     },
     async updateGeofence({commit},data){
         commit
+        const config = {
+            url: api.api + `track/geofence/${data.uid}`,
+            method: 'PUT',
+            headers:{
+                "Authorization": `Token ${localStorage.token}`
+            },
+            data: data
+        }
+        await axios(config).then((e)=>{
+            console.log(e)
+        })
+        console.log(data)
+    },
+    async createGeofence({commit},data){
+        commit
+        const config = {
+            url: api.api + `track/geofence`,
+            method: 'POST',
+            headers:{
+                "Authorization": `Token ${localStorage.token}`
+            },
+            data: data
+        }
+        await axios(config).then((e)=>{
+            console.log(e)
+        })
         console.log(data)
     }
 }

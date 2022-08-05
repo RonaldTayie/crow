@@ -2,6 +2,12 @@
 <v-card width="300" height="450" class="Fensecard" >
   <v-card-title>
     GeoFences
+    <v-spacer></v-spacer>
+    <v-btn icon @click="toggleGeoFenceListView(false)" class="btn-danger" >
+      <v-icon >
+        mdi-close
+      </v-icon>
+    </v-btn>
   </v-card-title>
   <v-card-text class="p-0" >
     <v-list dense >
@@ -39,7 +45,8 @@ export default {
   props: ['devices','fences'],
   methods: {
     ...mapActions([
-        'updateFocusGeoFence'
+        'updateFocusGeoFence',
+        'toggleGeoFenceListView'
     ]),
   }
 }

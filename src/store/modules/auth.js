@@ -50,8 +50,22 @@ const actions = {
             localStorage.setItem('user', JSON.stringify(e.data))
             commit('setUser',e.data)
         }).catch(() => {})
+    },
+    async createUser({commit},data) {
+        const config = {
+            url: api.api + 'auth/signup',
+            method: "POST",
+            headers: {
+                "Authorization": `Token ${localStorage.token}`
+            },
+            data: data
+        }
+        let result = await axios(config)
+        commit
+        return result.status == 200 || result.status == 201 ? true : false
     }
 }
+
 const getters = {
     getUserData: (state)=> state.user,
     getApi: ()=>api.api

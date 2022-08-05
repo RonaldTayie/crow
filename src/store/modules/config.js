@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const state = {
     theme: {
         is_dark: localStorage.is_dark || true,
@@ -9,11 +11,11 @@ const state = {
     },
     mapZoom: localStorage.mapZoom!=undefined?localStorage.mapZoom:14,
     initDrawingTools: false,
-    isDeviceMenuOpen: true,
+    isDeviceMenuOpen: false,
     isOptionsMenuOpen:false,
     isReportWindowOpen:false,
-    isGeoFenceListOpen: true,
-    geoCodeToken: 'Y-jlUGJpS9wvu1eqToywWRGZ3QRDK7Bftz2tJlEnWkVq7RbnoUEtzGYGbLhG4NXbB9HBWtaJQSjOwe-Pm8rPwL0UXbMtDOKb1RL7jJni6e51tzQnKt4Q7rsqDpYkzB-aXaNhZg94HF4YoJl91llBfg..',
+    isGeoFenceListOpen: false,
+    geoCodeToken: 'WEdWKbxEOsofm_SbE8CNHtFYP6Uxg-s3e1my6XsmhvfFLrRLoRPR1BWCxZviYVL8andS898iXpVBykWy_JaWZjeLxEu0teoYZe4-IZ1JjJTyjoISNuS6CxR0PFUrVOUIBEq1BH4H8RNjU-j1vs3-ug..',
 }
 const mutations = {
     setTheme:(state,value)=>{
@@ -64,8 +66,65 @@ const actions = {
         commit('changeReportWindow',false)
 
         commit('changeGeoFenceListView',value)
+    },
 
+    async ListViewRequestToMap({commit},config){
+        let map = {}
+        await axios(config).then(async (r) => {
+            const resp = r.data
+            if (resp.count > 0) {
+                let results = [...resp.results]
+                results.forEach((e) => {
+                    map[e.uid] = e
+                })
+                if (resp.next != null) {
+                    // Get the number of items in the page
+                    const pageSize = resp.fleets.length
+                    // get the number of total items available
+                    const contentSize = resp.count
+                    // Round up the number
+                    let s = Math.ceil((contentSize / pageSize))
+                    for (let p = 2; p <= s; p++) {
+                        config.url = config.url + `?page=${p}`
+                        await axios(config).then((e) => {
+                            e.data.results.forEach((e) => {
+                                map[e.uid] = e
+                            })
+                        }).catch((error) => {
+                            error
+                        })
+                    }
+                }
+            }
+        })
+        commit
+        return map
+    },
+    async ListViewRequestToList({commit},config){
+        let list = []
+        await axios(config).then(async (r)=>{
+            const resp = r.data
+            list = [...resp.results]
+            if(resp.next != null){
+                const pageSize = resp.results.length
+                const contentSize = resp.count
+                let s = Math.ceil( (contentSize/pageSize) )
+                for(let p = 2;p<=s;p++){
+                    config.url = config.url+`?page=${p}`
+                    await axios(config).then((e)=>{
+                        e.data.results.forEach((e)=>{
+                            list.push(e)
+                        })
+                    }).catch((error)=>{
+                        error
+                    })
+                }
+            }
+        })
+        commit
+        return list
     }
+
 }
 
 

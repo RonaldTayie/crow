@@ -94,7 +94,7 @@ export default {
     isFenceActive: false
   }),
   methods: {
-    ...mapActions(['loadGeoFences','LoadDevices','updateGeofence']),
+    ...mapActions(['loadGeoFences','LoadDevices','updateGeofence','createGeofence']),
     ...mapMutations(['changeDrawingTools']),
     async loadFence(){
       const uid = this.$route.params.uid
@@ -114,22 +114,37 @@ export default {
       this.movedMarker.id = k
       const newLoc = this.movedMarker.newLocation
       let p = [...this.polygon]
-      p[k] = [newLoc.lat,newLoc.lng]
+      console.log(p)
+      if(k==0||k==(p.length-1)){
+        p[0] = [newLoc.lat,newLoc.lng]
+        p[k] = [newLoc.lat,newLoc.lng]
+      }else{
+        p[k] = [newLoc.lat,newLoc.lng]
+      }
       this.polygon = p
     },
     doUpdateGeofence(){
       let data = {}
+      let coordinates = []
+      coordinates
+      this.polygon.forEach((p)=>{
+        coordinates.push([p[1],p[0]])
+      })
+
       if(this.newFence){
+        coordinates.push(coordinates[0])
         data = {
           name: this.FenceName,
           is_active: this.isFenceActive,
-          coordinates: this.polygon
+          geometry: coordinates
         }
-        data
+        this.createGeofence(data)
       }else{
         data = {
-          fence: this.$route.params.uid,
-          coordinates: this.polygon
+          uid: this.$route.params.uid,
+          name: this.FenceName,
+          is_active: this.isFenceActive,
+          geometry: coordinates
         }
         this.updateGeofence(data)
       }
@@ -168,6 +183,7 @@ export default {
           editableLayers.addLayer(layer);
         });
       });
+      this.$route.params.uid = ""
     },
     drawNewFence(){
       this.polygon = []
@@ -176,7 +192,6 @@ export default {
       this.FenceName = null
       this.InitDrawingTools()
     }
-
   },
   computed: {
     ...mapGetters({
@@ -199,12 +214,14 @@ export default {
       deep: true,
       handler(v){
         if(v){
-          const fence = v[this.$route.params.uid]
-          if(fence['properties']){
-            this.FenceName = fence.properties.name
-            this.isFenceActive = fence.properties.is_active
+          if(this.$route.params.uid){
+            const fence = v[this.$route.params.uid]
+            if(fence['properties']){
+              this.FenceName = fence.properties.name
+              this.isFenceActive = fence.properties.is_active
+            }
+            this.loadFence()
           }
-          this.loadFence()
         }
       }
     }

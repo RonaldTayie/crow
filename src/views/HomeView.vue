@@ -96,9 +96,9 @@
         </v-list-item>
         <v-list-item link @click="toggleOptionsMenu">
           <v-list-item-icon>
-            <v-icon>mdi-cog-outline</v-icon>
+            <v-icon>mdi-dots-horizontal-circle-outline</v-icon>
           </v-list-item-icon>
-          <v-list-item-title>Settings</v-list-item-title>
+          <v-list-item-title>Options</v-list-item-title>
         </v-list-item>
       </v-list>
 
@@ -144,7 +144,7 @@
         <DeviceReport v-if="isReportOpen" @reportViewError="triggerSnackBar"/>
         <DeviceDetails v-if="focusMarker.is_open" :uid="focusMarker.uid"
                        @closeDeviceDetails="focusMarker.is_open=false"/>
-        <OptionsMenu v-if="isOptionsMenuOpen" />
+        <OptionsMenu v-if="isOptionsMenuOpen" @hideDetails="hideDeviceDetails" />
         <GeoFenceList v-if="geofenceListViewState" :devices="devices" :fences="loadedFences"/>
         <l-map :zoom="zoom" :center="home" class="map" ref="map" :markerZoomAnimation="true" :zoomAnimation="true">
           <l-tile-layer :url="mapUrl" :attribution="mapAttribution" layer-type="base"></l-tile-layer>
@@ -217,7 +217,7 @@ export default {
   },
   methods: {
     ...mapActions(['connect_User', 'LoadDevices', 'mutateBroadcast', 'loadPackages', 'loadHazards', 'toggleDeviceMenu', 'setFocusDeviceUID', 'toggleReportWindow', 'toggleOptionsMenu', 'setSnackbarMessage', 'setSnackbarColor', 'showSnackbar', 'hideSnackbar','loadGeoFences']),
-    ...mapMutations(['updateDeviceLocation',]),
+    ...mapMutations(['updateDeviceLocation','changeDeviceMenu']),
     updateMap() {
       // this.markers.home = latLng(-26.8748, 26.6532)
     },
@@ -230,6 +230,10 @@ export default {
       this.zoom = 15
 
       this.setFocusDeviceUID(uid)
+    },
+    hideDeviceDetails(){
+      this.changeDeviceMenu(false)
+      this.focusMarker.is_open=false
     },
     recenter(coords){
       this.home = [coords.lat, coords.lng]

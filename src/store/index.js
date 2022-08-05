@@ -8,6 +8,8 @@ import devices from "@/store/modules/devices";
 import packages from "@/store/modules/packages";
 import extras from "@/store/modules/extras";
 import Report from "@/store/modules/Report";
+import Fleet from "@/store/modules/Fleet";
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -21,6 +23,7 @@ export default new Vuex.Store({
     constants,
     Report,
     auth,
+    Fleet,
     config,
     extras,
     track,

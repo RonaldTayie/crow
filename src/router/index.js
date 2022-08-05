@@ -46,6 +46,30 @@ const routes = [
       }
     },
   },
+  {
+    path:"/geofence/",
+    name:"NewGeoFence",
+    component: ()=> import('../views/GeofenceView'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.token != undefined) {
+        next()
+      } else {
+        router.push(from)
+      }
+    },
+  },
+  {
+    path:"/fleet",
+    name:"FleetView",
+    component: ()=> import('../views/FleetView'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.token != undefined) {
+        next()
+      } else {
+        router.push(from)
+      }
+    },
+  },
 ]
 
 const router = new VueRouter({
