@@ -1,4 +1,5 @@
 import api from './constants'
+import axios from "axios";
 
 const state = {
     fleets: {},
@@ -45,6 +46,22 @@ const actions = {
         console.log(drivers)
         commit
     },
+    async addVehicle({commit},data){
+        commit
+        const config = {
+            url: api.api + `vehicle`,
+            method: 'POST',
+            headers: {
+                "Authorization": `Token ${localStorage.token}`
+            },
+            data:data
+        }
+        return await axios(config).then(()=>{
+            return true
+        }).catch((error)=>{
+            return error
+        })
+    }
 }
 const getters = {
     getVehicles: (state) => state.vehicles,

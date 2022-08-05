@@ -26,7 +26,7 @@
         <v-list dense >
           <v-list-item-group>
             <v-list-item>
-              <v-list-item-title> Add Vehicle </v-list-item-title>
+              <v-list-item-title @click="dialogs.addVehicle=true" > Add Vehicle </v-list-item-title>
             </v-list-item>
             <v-list-item @click="addNewUser('driver')" >
               <v-list-item-title> Add Driver </v-list-item-title>
@@ -56,7 +56,7 @@
       </v-snackbar>
 
       <AddDriverDialog v-if="newUserRole != null || newUserRole != undefined" :is_open="dialogs.addUser" :role="newUserRole" @closeNewUserDialog="closeUserDialog" @snack="showSnackbar" />
-
+      <AddVehicleDialog v-if="dialogs.addVehicle" :is_open="dialogs.addVehicle" :fleets="fleets" @exitVehicleDialog="closeVehicleAddDialog" />
 
       <v-container>
         <div class="row">
@@ -226,7 +226,6 @@
           </div>
         </div>
       </v-container>
-
     </v-main>
   </v-app>
 </template>
@@ -234,10 +233,10 @@
 <script>
 import {mapActions, mapGetters} from "vuex";
 import AddDriverDialog from "@/components/FleetDialogs/AddDriverDialog";
-
+import AddVehicleDialog from '@/components/FleetDialogs/AddVehicleDialog'
 export default {
   name: "FleetView",
-  components: {AddDriverDialog},
+  components: {AddDriverDialog,AddVehicleDialog},
   data: ()=>({
     fleetVehicles: {},
     vehicleUID: null,
@@ -281,6 +280,9 @@ export default {
       this.snackBar.type = data.type
 
       this.snackBar.is_open = true
+    },
+    closeVehicleAddDialog(){
+      this.dialogs.addVehicle=false
     }
   },
   computed: {
