@@ -8,6 +8,7 @@ import LDrawToolbar from 'vue2-leaflet-draw-toolbar';
 import VueExcelXlsx from "vue-excel-xlsx";
 
 Vue.component('l-draw-toolbar',LDrawToolbar)
+Vue.use(require('vue-moment'));
 Vue.use(VueExcelXlsx)
 Vue.config.productionTip = false
 

@@ -4,7 +4,11 @@
   <v-card>
     <v-card-title>
       Add Vehicle <v-spacer></v-spacer>
-      <v-btn icon @click="$emit('exitVehicleDialog')" ></v-btn>
+      <v-btn icon @click="$emit('exitVehicleDialog')" small class="bg-danger" color="white" ripple >
+        <v-icon>
+          mdi-close
+        </v-icon>
+      </v-btn>
     </v-card-title>
     <form lazy_validation @submit.prevent="doAddVehicle" >
       <v-card-text>
@@ -50,7 +54,7 @@ export default {
   }),
   props: ['is_open'],
   methods: {
-    ...mapActions(['LoadFleets','createVehicle']),
+    ...mapActions(['LoadFleets','createVehicle','addVehicle','LoadVehicles']),
     initFleets(){
       let fleetValues = Object.values(this.fleets)
       let nameUidMap = {}
@@ -65,9 +69,16 @@ export default {
     setSelectedFleet(name){
       this.vehicle.fleet= this.fleetUidNameMap[name]
     },
-    doAddVehicle(){
-      console.log(this.vehicle)
-    }
+    async doAddVehicle(){
+      let result = await this.addVehicle(this.vehicle)
+      if(result){
+        this.$emit('snack',{type:'success',message:'Vehicle Added Successfully.'})
+        this.LoadVehicles()
+        this.$emit('exitFleetAddDialog')
+      }else{
+        this.$emit('snack',{type:'error',message:'Failed to add vehicle.'})
+      }
+    },
   },
   computed:{
     ...mapGetters({

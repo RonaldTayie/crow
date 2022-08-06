@@ -55,7 +55,7 @@
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item>
+        <v-list-item @click="toggleStaffMenu(true)" >
           <v-list-item-avatar>
             <v-icon>
               mdi-card-account-details-outline
@@ -63,7 +63,7 @@
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>
-              Drivers
+              Staff
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -79,7 +79,7 @@ import {mapActions} from "vuex";
 export default {
   name: "Options",
   methods: {
-    ...mapActions(['toggleGeoFenceListView']),
+    ...mapActions(['toggleGeoFenceListView','toggleStaffMenu']),
     hideDeviceDetails() {
       this.toggleGeoFenceListView(true)
       this.$emit('hideDetails')

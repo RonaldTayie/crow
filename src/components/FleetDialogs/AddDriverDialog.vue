@@ -62,16 +62,16 @@ export default {
       let user=  this.newUser
       user['username'] = this.newUser.email
       user['user_group'] = this.role[0].toString().toUpperCase()+this.role.substr(1,this.role.length)
-      console.log(user)
       let result = this.createUser(user)
       if (result){
         this.$emit('snack',{message:`${user.user_group} Created`,type:'success'})
+        setTimeout(()=>{
+          this.$emit('closeNewUserDialog')
+        },2000)
       }else{
         this.$emit('snack',{message:`${user.user_group} Addition Failed!!`,type:'warning'})
       }
-      setTimeout(()=>{
-        this.$emit('closeNewUserDialog')
-      },2000)
+
     }
   }
 }

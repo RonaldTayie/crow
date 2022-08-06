@@ -44,20 +44,20 @@
                 </v-list-item-content>
               </v-list-item>
 
-              <v-list-item dense class="py-0">
-                <v-list-item-avatar size="25">
-                  <v-icon small>
-                    mdi-tools
-                  </v-icon>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    Settings
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+<!--              <v-list-item dense class="py-0">-->
+<!--                <v-list-item-avatar size="25">-->
+<!--                  <v-icon small>-->
+<!--                    mdi-tools-->
+<!--                  </v-icon>-->
+<!--                </v-list-item-avatar>-->
+<!--                <v-list-item-content>-->
+<!--                  <v-list-item-title>-->
+<!--                    Settings-->
+<!--                  </v-list-item-title>-->
+<!--                </v-list-item-content>-->
+<!--              </v-list-item>-->
 
-              <v-list-item dense class="py-0 bg-danger">
+              <v-list-item dense class="py-0 bg-danger" @click="doLogout" >
                 <v-list-item-avatar size="25">
                   <v-icon small>
                     mdi-location-exit
@@ -104,14 +104,6 @@
 
     </v-navigation-drawer>
 
-    <v-system-bar>
-      <v-spacer></v-spacer>
-      <v-icon>mdi-wifi-strength-4</v-icon>
-      <v-icon>mdi-signal-cellular-outline</v-icon>
-      <v-icon>mdi-battery</v-icon>
-      <span>12:30</span>
-    </v-system-bar>
-
     <v-main>
 
       <v-snackbar
@@ -146,6 +138,8 @@
                        @closeDeviceDetails="focusMarker.is_open=false"/>
         <OptionsMenu v-if="isOptionsMenuOpen" @hideDetails="hideDeviceDetails" />
         <GeoFenceList v-if="geofenceListViewState" :devices="devices" :fences="loadedFences"/>
+        <StaffMenu v-if="isStaffMenuOpen" />
+
         <l-map :zoom="zoom" :center="home" class="map" ref="map" :markerZoomAnimation="true" :zoomAnimation="true">
           <l-tile-layer :url="mapUrl" :attribution="mapAttribution" layer-type="base"></l-tile-layer>
           <l-marker :lat-lng="markers.home"></l-marker>
@@ -167,9 +161,11 @@ import OptionsMenu from "@/components/OptionsMenu";
 import GeoFenceList from "@/components/GeoFenceList";
 
 import {latLng} from "leaflet";
+import StaffMenu from "@/components/StaffMenu";
 
 export default {
   components: {
+    StaffMenu,
     LMap,
     LTileLayer,
     LMarker,
@@ -216,7 +212,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['connect_User', 'LoadDevices', 'mutateBroadcast', 'loadPackages', 'loadHazards', 'toggleDeviceMenu', 'setFocusDeviceUID', 'toggleReportWindow', 'toggleOptionsMenu', 'setSnackbarMessage', 'setSnackbarColor', 'showSnackbar', 'hideSnackbar','loadGeoFences']),
+    ...mapActions(['connect_User', 'LoadDevices', 'mutateBroadcast', 'loadPackages', 'loadHazards', 'toggleDeviceMenu', 'setFocusDeviceUID', 'toggleReportWindow', 'toggleOptionsMenu', 'setSnackbarMessage', 'setSnackbarColor', 'showSnackbar', 'hideSnackbar','loadGeoFences','Logout']),
     ...mapMutations(['updateDeviceLocation','changeDeviceMenu']),
     updateMap() {
       // this.markers.home = latLng(-26.8748, 26.6532)
@@ -243,6 +239,10 @@ export default {
       this.setSnackbarMessage(v.message)
       this.showSnackbar()
     },
+    async doLogout(){
+      this.Logout()
+      this.$router.push('/')
+    }
   },
   computed: {
     ...mapGetters({
@@ -257,6 +257,7 @@ export default {
       isReportOpen: 'getReportWindowState',
       isOptionsMenuOpen: 'getOptionsMenuState',
       geofenceListViewState: 'getGeoFenceListViewState',
+      isStaffMenuOpen: 'getStaffMenuState',
       loadedFences: 'getGeofence',
       snackbar: 'getSnackbar',
       focusGeofenceUID: 'getFocusGeofenceUID'
@@ -311,6 +312,7 @@ export default {
 
 <style scoped>
 .map {
-  height: 97vh;
+  height: 100vh;
+  width: 100vw;
 }
 </style>

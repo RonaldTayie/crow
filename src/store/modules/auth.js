@@ -38,6 +38,10 @@ const actions = {
         })
         return l
     },
+    async Logout({commit}){
+        commit
+        localStorage.clear()
+    },
     async LoadUser({commit}) {
         const config = {
             url: api.api + 'auth/auth-user',

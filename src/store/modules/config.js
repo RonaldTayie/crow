@@ -15,6 +15,7 @@ const state = {
     isOptionsMenuOpen:false,
     isReportWindowOpen:false,
     isGeoFenceListOpen: false,
+    isStaffMenuOpen: false,
     geoCodeToken: 'WEdWKbxEOsofm_SbE8CNHtFYP6Uxg-s3e1my6XsmhvfFLrRLoRPR1BWCxZviYVL8andS898iXpVBykWy_JaWZjeLxEu0teoYZe4-IZ1JjJTyjoISNuS6CxR0PFUrVOUIBEq1BH4H8RNjU-j1vs3-ug..',
 }
 const mutations = {
@@ -27,7 +28,8 @@ const mutations = {
     changeDeviceMenu:(state,v)=>state.isDeviceMenuOpen=v,
     changeOptionsMenu:(state,v)=> state.isOptionsMenuOpen=v,
     changeReportWindow:(state,v)=>state.isReportWindowOpen = v,
-    changeGeoFenceListView: (state,v)=>state.isGeoFenceListOpen=v
+    changeGeoFenceListView: (state,v)=>state.isGeoFenceListOpen=v,
+    changeStaffMenu: (state,v)=>state.isStaffMenuOpen = v
 }
 const actions = {
     async updateZoom({commit},zoom){
@@ -43,6 +45,7 @@ const actions = {
         commit('changeReportWindow',false)
         commit('changeDeviceMenu',true)
         commit('changeOptionsMenu',false)
+        commit('changeStaffMenu',false)
         //Close GeoFenceList
         commit('changeGeoFenceListView',false)
     },
@@ -50,6 +53,7 @@ const actions = {
         commit('changeReportWindow',false)
         commit('changeDeviceMenu',false)
         commit('changeOptionsMenu',true)
+        commit('changeStaffMenu',false)
         //Close GeoFenceList
         commit('changeGeoFenceListView',false)
     },
@@ -57,6 +61,7 @@ const actions = {
         commit('changeOptionsMenu',false)
         commit('changeDeviceMenu',false)
         commit('changeReportWindow',true)
+        commit('changeStaffMenu',false)
         //Close GeoFenceList
         commit('changeGeoFenceListView',false)
     },
@@ -64,8 +69,17 @@ const actions = {
         commit('changeOptionsMenu',false)
         commit('changeDeviceMenu',false)
         commit('changeReportWindow',false)
+        commit('changeStaffMenu',false)
 
         commit('changeGeoFenceListView',value)
+    },
+    async toggleStaffMenu({commit},value){
+        commit('changeOptionsMenu',false)
+        commit('changeDeviceMenu',false)
+        commit('changeReportWindow',false)
+        commit('changeGeoFenceListView',false)
+
+        commit('changeStaffMenu',value)
     },
 
     async ListViewRequestToMap({commit},config){
@@ -138,7 +152,8 @@ const getters = {
     getOptionsMenuState:(state)=> state.isOptionsMenuOpen,
     getReportWindowState:(state)=>state.isReportWindowOpen,
     getGeoFenceListViewState: (state)=> state.isGeoFenceListOpen,
-    getGeoCodeToken: (state)=>state.geoCodeToken
+    getGeoCodeToken: (state)=>state.geoCodeToken,
+    getStaffMenuState: (state)=> state.isStaffMenuOpen
 }
 
 export default {

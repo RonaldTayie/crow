@@ -49,6 +49,9 @@
 
             </v-chip>
           </template>
+          <template v-slot:item.date_received="{item}" >
+            {{ item.date_received | moment("ddd, D-MM-YYYY") }}
+          </template>
         </v-data-table>
       </div>
     </v-main>
