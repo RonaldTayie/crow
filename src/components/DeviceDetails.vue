@@ -70,7 +70,7 @@
           >
             <v-carousel :show-arrows="false" :hide-delimiters="true" continuous cycle>
               <v-carousel-item v-for="img in packageImage[devices[uid].package.uid]" :key="img.uid">
-                <v-img :src="api.substring(0,api.length-1)+img.image" contain/>
+                <v-img :src="img.image" contain/>
               </v-carousel-item>
             </v-carousel>
           </v-list-item-avatar>
