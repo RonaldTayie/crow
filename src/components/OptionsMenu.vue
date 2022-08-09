@@ -36,7 +36,7 @@
                 <v-list-item @click="hideDeviceDetails" >
                   <v-list-item-title>Show Fences</v-list-item-title>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item to="/geofence/" >
                   <v-list-item-title>Create Fences</v-list-item-title>
                 </v-list-item>
               </v-list>

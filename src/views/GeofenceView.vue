@@ -46,6 +46,11 @@
       </v-menu>
     </v-app-bar>
     <v-main>
+
+        <v-snackbar v-model="msgSnack.is_open" :typeof="msgSnack.type" :timeout="msgSnack.timeout" >
+          {{msgSnack.message}}
+        </v-snackbar>
+
         <v-card width="250" class="fence-details" >
           <v-card-title>
             Fence Details
@@ -91,7 +96,13 @@ export default {
     },
     newFence: false,
     FenceName: null,
-    isFenceActive: false
+    isFenceActive: false,
+    msgSnack:{
+      is_open: false,
+      type:null,
+      message: null,
+      timeout: 3500
+    }
   }),
   methods: {
     ...mapActions(['loadGeoFences','LoadDevices','updateGeofence','createGeofence']),
@@ -123,7 +134,7 @@ export default {
       }
       this.polygon = p
     },
-    doUpdateGeofence(){
+    async doUpdateGeofence(){
       let data = {}
       let coordinates = []
       coordinates
@@ -138,7 +149,16 @@ export default {
           is_active: this.isFenceActive,
           geometry: coordinates
         }
-        this.createGeofence(data)
+        let result = await this.createGeofence(data)
+        if (result){
+          this.msgSnack.type = 'success'
+          this.msgSnack.message = "Geofence Create"
+          this.msgSnack.is_open = true
+        }else{
+          this.msgSnack.type = 'error'
+          this.msgSnack.message = "Geofence Creation Failed!"
+          this.msgSnack.is_open = true
+        }
       }else{
         data = {
           uid: this.$route.params.uid,
@@ -146,7 +166,16 @@ export default {
           is_active: this.isFenceActive,
           geometry: coordinates
         }
-        this.updateGeofence(data)
+        let result = await this.updateGeofence(data)
+        if(result){
+          this.msgSnack.type = 'success'
+          this.msgSnack.message = "Geofence Updated"
+          this.msgSnack.is_open = true
+        }else{
+          this.msgSnack.type = 'error'
+          this.msgSnack.message = "Geofence Update Failed!"
+          this.msgSnack.is_open = true
+        }
       }
     },
 
@@ -221,6 +250,9 @@ export default {
               this.isFenceActive = fence.properties.is_active
             }
             this.loadFence()
+          }else{
+            this.newFence = true
+            this.InitDrawingTools()
           }
         }
       }

@@ -1,4 +1,4 @@
-const dev = false
+const dev = true
 
 const ip = dev?'192.168.8.106': 'apiproonal.co.za'
 const port = dev?':8000':''

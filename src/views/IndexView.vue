@@ -30,8 +30,8 @@
           {{ login.message }}
         </v-snackbar>
 
-        <div class="stage">
-          <form @submit.prevent="doLogin()">
+        <div class="stage"  >
+          <form @submit.prevent="doLogin()" v-if="width>450" >
             <v-card id="form-card" light>
               <v-card-text>
                 <v-text-field
@@ -62,6 +62,24 @@
               </v-card-actions>
             </v-card>
           </form>
+          <v-card width="320" >
+            <v-banner two-line v-if="width<=450">
+              <v-avatar
+                  slot="icon"
+                  color="red accent-4"
+                  size="40"
+              >
+                <v-icon
+                    icon="mdi-lock"
+                    color="white"
+                >
+                  mdi-alert-octagram-outline
+                </v-icon>
+              </v-avatar>
+              <p>Sorry, you will need a larger device to access.</p>
+              <p>A laptop or desktop will do just fine. Else, if you are using a smartphone you can use the <i><b>Desktop Site</b></i> option in your browser app.</p>
+            </v-banner>
+          </v-card>
         </div>
         <l-map :zoom="zoom"
                :center="home"
@@ -70,7 +88,6 @@
           <l-tile-layer :url="mapUrl" :attribution="mapAttribution"></l-tile-layer>
           <l-marker :lat-lng="home"></l-marker>
         </l-map>
-
       </div>
     </v-main>
   </v-app>
@@ -84,6 +101,8 @@ import {LMap, LMarker, LTileLayer} from "vue2-leaflet";
 export default {
   name: "IndexView",
   data: () => ({
+    width: window.innerWidth,
+    height: window.innerWidth,
     home: [-20.95095611323343, 29.014987476711582],
     zoom: 15,
     showPassword: false,

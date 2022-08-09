@@ -57,14 +57,16 @@
       <AddFleetDialog v-if="addFleetDialog" :is_open="addFleetDialog" @snack="showSnackbar"
                       @exitFleetAddDialog="closeAddFleetDialog"/>
 
-
       <v-container>
         <div class="row">
           <div class="col-md-4 col-sm-12 col-lg-4 col-12" v-if="Object.keys(fleetVehicles).length<1">
             <v-card width="100%" height="auto">
+              <v-card-title class="mb-0 pb-0">
+                Fleets
+              </v-card-title>
               <v-card-text class="p-0">
-                <v-list>
-                  <v-list-item-group>
+                <v-list dense>
+                  <v-list-item-group v-if="fleets">
                     <v-list-item v-for="i in fleets" :key="i.uid" @click="loadSelectedFleet(i.uid)">
                       <v-list-item-content>
                         <v-list-item-title> {{ i.name }}</v-list-item-title>
@@ -74,6 +76,16 @@
                       </v-list-item-content>
                     </v-list-item>
                   </v-list-item-group>
+                  <v-list-item color="amber" class="bg-danger" v-if="!fleets">
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        No Fleets
+                      </v-list-item-title>
+                      <v-list-item-subtitle>
+                        Please create/add a fleet and vehicles.
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
                 </v-list>
               </v-card-text>
             </v-card>
@@ -106,7 +118,7 @@
               <v-card-text class="p-0">
                 <v-list>
                   <v-list-item-group>
-                    <v-list-item v-for="v in fleetVehicles" :key="v.uid" @click="vehicleUID=v.uid">
+                    <v-list-item v-for="v in fleetVehicles" :key="v.uid" @click="openVehicle(v.uid)">
                       <v-avatar class="bg-blue p-1 mr-1" color="blue">
                         {{ v.brand[0] }}
                       </v-avatar>
@@ -137,10 +149,41 @@
                   :
                   {{ fleetVehicles[vehicleUID].reg_num }}
                   <v-spacer></v-spacer>
+
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                          dark
+                          v-bind="attrs"
+                          v-on="on"
+                          icon
+                          outlined
+                      >
+                        <v-icon>
+                          mdi-dots-vertical
+                        </v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list dense>
+                      <v-list-item @click="addImageDialog=true">
+                        <v-list-item-icon>
+                          <v-icon>
+                            mdi-image
+                          </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>
+                          Add Images
+                        </v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+
                 </v-card-title>
 
-                <v-carousel>
-
+                <v-carousel cycle v-model="loadedVehicleImages" v-if="focusVehicleImages != null" height="250" >
+                  <v-carousel-item v-for="img in focusVehicleImages" :key="img.uid" height="300" >
+                    <v-img :src="img.image" contain height="300" max-width="100%"></v-img>
+                  </v-carousel-item>
                 </v-carousel>
 
                 <v-card-text>
@@ -235,7 +278,6 @@
                     </v-expansion-panel>
                   </v-expansion-panels>
                   <v-divider></v-divider>
-
                   <v-card-actions>
                     <v-menu
                         v-if="fleetVehicles[vehicleUID]"
@@ -323,15 +365,54 @@
                         </v-list>
                       </v-card>
                     </v-menu>
-
                   </v-card-actions>
-
                 </v-card-text>
               </v-card>
             </v-sheet>
           </div>
         </div>
       </v-container>
+
+      <v-dialog v-model="addImageDialog" width="320">
+
+        <v-card v-if="vehicleUID">
+          <v-card-title>
+            {{ fleetVehicles[vehicleUID].brand }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ fleetVehicles[vehicleUID].reg_num }}
+          </v-card-subtitle>
+          <form @submit.prevent="doUploadVehicleImages" enctype="multipart/form-data">
+            <v-card-text>
+              <v-file-input
+                  label="Images"
+                  v-model="newFocusVehicleImages"
+                  filled
+                  multiple
+                  required
+                  prepend-icon="mdi-camera"
+              ></v-file-input>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn text small outlined type="submit">
+                <v-icon>
+                  mdi-upload
+                </v-icon>
+                Upload
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn type="reset">
+                <v-icon>
+                  mdi-reset
+                </v-icon>
+                Reset
+              </v-btn>
+            </v-card-actions>
+          </form>
+        </v-card>
+
+      </v-dialog>
+
     </v-main>
   </v-app>
 </template>
@@ -353,6 +434,9 @@ export default {
     addVehicleDialog: false,
     addFleetDialog: false,
     selectedDriver: null,
+    addImageDialog: false,
+    newFocusVehicleImages: [],
+    loadedVehicleImages: [],
     dialogs: {
       addUser: null,
       addVehicle: null,
@@ -366,7 +450,7 @@ export default {
     }
   }),
   methods: {
-    ...mapActions(['LoadDrivers', 'LoadFleets', 'LoadVehicles', 'updateVehicle']),
+    ...mapActions(['LoadDrivers', 'LoadFleets', 'LoadVehicles', 'updateVehicle', 'uploadVehicleImages', 'loadFocusVehicleImages']),
     loadSelectedFleet(uid) {
       let fleet_cars = {}
       let loaded_vehicles = Object.values(this.vehicles)
@@ -415,20 +499,45 @@ export default {
       } else {
         this.showSnackbar({type: 'alert', message: `${t} Reassignment Failed!!`})
       }
-
+    },
+    async openVehicle(uid) {
+      this.vehicleUID = uid
+      await this.loadFocusVehicleImages(uid)
+    },
+    async doUploadVehicleImages() {
+      this.newFocusVehicleImages.forEach(async (i) => {
+        let form = new FormData()
+        form.append('image', i, i.name)
+        form.append('vehicle', this.vehicleUID)
+        let result = await this.uploadVehicleImages(form)
+        result ? this.showSnackbar({type: 'success', message: 'Image uploaded!'}) : this.showSnackbar({
+          type: 'error',
+          message: 'Image upload failed..'
+        })
+      })
     }
   },
   computed: {
     ...mapGetters({
       fleets: 'getFleets',
       drivers: 'getDrivers',
-      vehicles: 'getVehicles'
+      vehicles: 'getVehicles',
+      focusVehicleImages: 'getFocusVehicleImages'
     })
   },
   created() {
     this.LoadFleets()
     this.LoadVehicles()
     this.LoadDrivers()
+  },
+  watch: {
+    focusVehicleImages: {
+      deep: true,
+      immediate: true,
+      handler(v) {
+        this.loadedVehicleImages = v
+      }
+    }
   }
 }
 </script>

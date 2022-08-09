@@ -69,10 +69,8 @@ const actions = {
             },
             data: data
         }
-        await axios(config).then((e)=>{
-            console.log(e)
-        })
-        console.log(data)
+        let result = await axios(config)
+        return result.status ==200 || result.status==201?true:false
     },
     async createGeofence({commit},data){
         commit
@@ -84,10 +82,8 @@ const actions = {
             },
             data: data
         }
-        await axios(config).then((e)=>{
-            console.log(e)
-        })
-        console.log(data)
+        let result = await axios(config)
+        return result.status==201 || result.status==200?true:false
     }
 }
 const getters = {
