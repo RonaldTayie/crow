@@ -122,7 +122,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['generateReport', 'LoadDevices', 'mutateBroadcast', 'loadPackages','loadHazards']),
+    ...mapActions(['generateReport', 'LoadDevices', 'mutateBroadcast', 'loadPackages','loadHazards','getPointAddress']),
     filterOnlyCapsText(value, search) {
       return value != null &&
           search != null &&
@@ -143,15 +143,12 @@ export default {
     getColor (v) {
       return v==true?'green':'amber'
     },
-    storeTempAddress(e,r,uid){
-      if(!e){
-        this.addresses[uid] = r.address.Match_addr
-      }
-    },
-    getCode(coords,uid){
+    async getCode(coords,uid){
       let loc = latLng(coords.latitude,coords.longitude)
-      const token = this.geoCodeToken
-      reverseGeocode({token}).latlng(loc).run((e,r)=>this.storeTempAddress(e,r,uid))
+      let address = await this.getPointAddress(loc)
+      if (address){
+        this.addresses[uid] = address
+      }
     }
 
   },
