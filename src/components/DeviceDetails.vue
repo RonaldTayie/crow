@@ -229,7 +229,6 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
-import {reverseGeocode} from 'esri-leaflet-geocoder'
 
 export default {
   name: "DeviceDetails",
@@ -262,17 +261,13 @@ export default {
   }),
   props: ['uid'],
   methods: {
-    ...mapActions(['updateDevice','deleteDevice','LoadDevices']),
-    updateAddress(e, r) {
-      if (e) {
-        return
-      }
-      this.address = r.address.Match_addr
-    },
-    getCode() {
-      const token = this.geoCodeToken
+    ...mapActions(['updateDevice','deleteDevice','LoadDevices','getPointAddress']),
+    async getCode() {
       if (this.devices[this.uid].last_location) {
-        reverseGeocode({token}).latlng(this.devices[this.uid].last_location).run((e, r) => this.updateAddress(e, r))
+        let addr = await this.getPointAddress(this.devices[this.uid].last_location)
+        if(addr){
+          this.address = addr
+        }
       }
     },
     initDialogData(){
@@ -374,7 +369,6 @@ export default {
       packageImage: 'getPackageImages',
       api: 'getApi',
       hazardLevels: 'getHazardLevels',
-      geoCodeToken: 'getGeoCodeToken',
       geofence: 'getGeofence'
     })
   },
