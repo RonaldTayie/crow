@@ -58,7 +58,7 @@
                 tile
                 size="80"
             >
-              <img :src="api.substring(0,api.length-1) + images[device.package.uid][0].image" contain/>
+              <img :src="images[device.package.uid][0].image" contain/>
             </v-list-item-avatar>
           </v-list-item>
           <v-list-item>

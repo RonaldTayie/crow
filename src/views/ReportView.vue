@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <v-app-bar flat class="no-print">
+    <v-app-bar flat class="no-print" height="67" >
       <v-app-bar-nav-icon to="/home" class="no-print" >
         <v-icon>
           mdi-home

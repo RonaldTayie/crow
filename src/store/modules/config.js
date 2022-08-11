@@ -16,7 +16,6 @@ const state = {
     isReportWindowOpen:false,
     isGeoFenceListOpen: false,
     isStaffMenuOpen: false,
-    geoCodeToken: 'WEdWKbxEOsofm_SbE8CNHtFYP6Uxg-s3e1my6XsmhvfFLrRLoRPR1BWCxZviYVL8andS898iXpVBykWy_JaWZjeLxEu0teoYZe4-IZ1JjJTyjoISNuS6CxR0PFUrVOUIBEq1BH4H8RNjU-j1vs3-ug..',
 }
 const mutations = {
     setTheme:(state,value)=>{
@@ -152,7 +151,6 @@ const getters = {
     getOptionsMenuState:(state)=> state.isOptionsMenuOpen,
     getReportWindowState:(state)=>state.isReportWindowOpen,
     getGeoFenceListViewState: (state)=> state.isGeoFenceListOpen,
-    getGeoCodeToken: (state)=>state.geoCodeToken,
     getStaffMenuState: (state)=> state.isStaffMenuOpen
 }
 
