@@ -11,7 +11,6 @@ const mutations = {
 }
 const actions = {
     async Login({commit}, data) {
-        console.log(api)
         const config = {
             method: "POST",
             url: api.api + 'auth/signin',
