@@ -1,10 +1,15 @@
-const dev = true
+const dev = false
 
-const ip = dev?'192.168.8.105': '127.0.0.1'
-const port = '8000'
+const ip = dev?'192.168.8.106': 'apiproonal.co.za'
+const port = dev?':8000':''
 
-const api = `http://${ip}:${port}/`
+const header = dev?'http':'https'
+const socket = dev?'ws':'wss'
+const socketPort = dev?'':':8001'
+const api = `${header}://${ip}${port}/`
+const sock = `${socket}://${ip}${port+socketPort}/`
 
 export default {
-    api
+    api,
+    sock
 }

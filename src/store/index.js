@@ -3,6 +3,13 @@ import Vuex from 'vuex'
 import constants from './modules/constants'
 import auth from './modules/auth'
 import config from './modules/config'
+import track from "@/store/modules/track";
+import devices from "@/store/modules/devices";
+import packages from "@/store/modules/packages";
+import extras from "@/store/modules/extras";
+import Report from "@/store/modules/Report";
+import Fleet from "@/store/modules/Fleet";
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -14,7 +21,13 @@ export default new Vuex.Store({
   },
   modules: {
     constants,
+    Report,
     auth,
-    config
+    Fleet,
+    config,
+    extras,
+    track,
+    devices,
+    packages
   }
 })

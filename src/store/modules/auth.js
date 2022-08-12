@@ -11,7 +11,6 @@ const mutations = {
 }
 const actions = {
     async Login({commit}, data) {
-        console.log(api)
         const config = {
             method: "POST",
             url: api.api + 'auth/signin',
@@ -32,11 +31,15 @@ const actions = {
             })
             localStorage.setItem('token',token)
             commit('setToken',token)
-            return true;
-        }).catch(() => {
-            return false;
+            return { status: 'success', };
+        }).catch((e) => {
+            return { status: 'failed',message: e };
         })
         return l
+    },
+    async Logout({commit}){
+        commit
+        localStorage.clear()
     },
     async LoadUser({commit}) {
         const config = {
@@ -50,8 +53,22 @@ const actions = {
             localStorage.setItem('user', JSON.stringify(e.data))
             commit('setUser',e.data)
         }).catch(() => {})
+    },
+    async createUser({commit},data) {
+        const config = {
+            url: api.api + 'auth/signup',
+            method: "POST",
+            headers: {
+                "Authorization": `Token ${localStorage.token}`
+            },
+            data: data
+        }
+        let result = await axios(config)
+        commit
+        return result.status == 200 || result.status == 201 ? true : false
     }
 }
+
 const getters = {
     getUserData: (state)=> state.user,
     getApi: ()=>api.api
