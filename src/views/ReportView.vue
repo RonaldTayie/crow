@@ -35,7 +35,7 @@
             ></v-text-field>
           </template>
           <template v-slot:item.address="{ item }">
-<!--            {{ getCode(item.location,item.uid)}}-->
+            <span class="no-print hidden" hidden > {{ getCode(item.location,item.uid) }} </span>
             {{ addresses[item.uid] }}
           </template>
           <template v-slot:item.in_geofence="{ item }">
