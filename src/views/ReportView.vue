@@ -61,7 +61,6 @@
 <script>
 import {mapActions, mapGetters} from "vuex";
 import {latLng} from "leaflet";
-import {reverseGeocode} from "esri-leaflet-geocoder";
 import ReportHeader from "@/components/ReportHeader";
 export default {
   name: "ReportView",
