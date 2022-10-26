@@ -450,7 +450,7 @@ export default {
     }
   }),
   methods: {
-    ...mapActions(['LoadDrivers', 'LoadFleets', 'LoadVehicles', 'updateVehicle', 'uploadVehicleImages', 'loadFocusVehicleImages']),
+    ...mapActions(['LoadDrivers', 'LoadFleets', 'LoadVehicles', 'updateVehicle', 'uploadVehicleImages', 'loadFocusVehicleImages','getPointAddress']),
     loadSelectedFleet(uid) {
       let fleet_cars = {}
       let loaded_vehicles = Object.values(this.vehicles)
