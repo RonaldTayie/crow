@@ -5,7 +5,7 @@ const port = dev?':8000':''
 
 const header = dev?'http':'https'
 const socket = dev?'ws':'wss'
-const socketPort = dev?'':':8001'
+const socketPort = dev?'':''
 const api = `${header}://${ip}${port}/`
 const sock = `${socket}://${ip}${port+socketPort}/`
 
