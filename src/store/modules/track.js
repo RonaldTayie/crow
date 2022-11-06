@@ -90,7 +90,7 @@ const actions = {
         commit
         const config = {
             method: 'get',
-            url: `https://api.geoapify.com/v1/geocode/reverse?lat=${data.lat}&lon=${data.lng}&apiKey=ccc644e37a0f4915bdde77799e0ce852`,
+            url: `https://api.geoapify.com/v1/geocode/reverse?lat=${data.lat}&lon=${data.lng}&apiKey=ce41844acf26459083ed3d9def0f7c0a`,
         };
         return await axios(config)
             .then(function (response) {
