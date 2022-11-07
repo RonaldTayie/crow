@@ -7,6 +7,7 @@ This repo contains the UI /fron end of the Crow GPS tracking and logging system.
 
 The entire project is devided in to two main parts, namely, the API/backend and the UI/ Front end.
 The Front end is built using VueJS while the back end is built using Django.
+Due to security updates in progress (as of Oct 27, 2022), access to the API Repo will be restricted.
 
 The two components communicate using the HTTP methods GET, PUT, POST and Delete.
 The design and implementation of requests and the design of the API was inspired by CRUD functionality. During development, it meant that procedures/tasks could be seperated efectively treating most of the core components of the application as indiviual parts.
