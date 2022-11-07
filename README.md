@@ -4,7 +4,7 @@
 This repo contains the UI /fron end of the Crow GPS tracking and logging system.
 
 ## Acknowledgements
-The Layout for this application was inspired by [Thabelani Moyo](github.com/bloodyeclipse)
+The Layout for this application was inspired by [Thabelani Moyo](https://github.com/bloodyeclipse)
 
 # Project Description
 
