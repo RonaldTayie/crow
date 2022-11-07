@@ -1,24 +1,22 @@
 # crow
 
-## Project setup
-```
-npm install
-```
+# Repo
+This repo contains the UI /fron end of the Crow GPS tracking and logging system.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+# Project Description
 
-### Compiles and minifies for production
-```
-npm run build
-```
+The entire project is devided in to two main parts, namely, the API/backend and the UI/ Front end.
+The Front end is built using VueJS while the back end is built using Django.
 
-### Lints and fixes files
-```
-npm run lint
-```
+The two components communicate using the HTTP methods GET, PUT, POST and Delete.
+The design and implementation of requests and the design of the API was inspired by CRUD functionality. During development, it meant that procedures/tasks could be seperated efectively treating most of the core components of the application as indiviual parts.
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# Tracking
+
+The tracking functionality is achieved using web socket connections between the Backend and the front end. When a user logs in, their HTTPS connection is upgraded to a websocket connection. This is done in such a manner that the websocket connection remains alive while the user interacts with other parts of the application. As the use interacts with other parts of the application, requests to the API are sent using normal HTTPS,outside and away from the websocket connection. This help ensure that the UI would be and will continue to be easy to update to complimet the changes to the API.
+
+
+### Live Link
+```
+https://crow-731b5.web.app/
+```
