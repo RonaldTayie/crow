@@ -19,6 +19,8 @@ The design and implementation of requests and the design of the API was inspired
 
 The tracking functionality is achieved using web socket connections between the Backend and the front end. When a user logs in, their HTTPS connection is upgraded to a websocket connection. This is done in such a manner that the websocket connection remains alive while the user interacts with other parts of the application. As the use interacts with other parts of the application, requests to the API are sent using normal HTTPS,outside and away from the websocket connection. This help ensure that the UI would be and will continue to be easy to update to complimet the changes to the API.
 
+# Email: admin@crow.net
+# Password: pS844ERiGU6eGp7
 
 ### Live Link
 ```
